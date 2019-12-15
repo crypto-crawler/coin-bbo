@@ -1,25 +1,21 @@
 import WebSocket from 'ws';
-import { Logger } from 'winston';
 import { ExchangeInfo, PairInfo } from 'exchange-info';
-
-export { default as createLogger } from './logger';
 
 // eslint-disable-next-line import/prefer-default-export
 export async function listenWebSocket(
   websocket: WebSocket,
   handleData: (data: WebSocket.Data) => void,
-  logger: Logger,
 ): Promise<void> {
   websocket.on('message', handleData);
   websocket.on('open', () => {
-    logger.info(`${websocket.url} connected`);
+    console.info(`${websocket.url} connected`); // eslint-disable-line no-console
   });
   websocket.on('error', error => {
-    logger.error(JSON.stringify(error));
+    console.error(JSON.stringify(error)); // eslint-disable-line no-console
     process.exit(1); // fail fast, pm2 will restart it
   });
   websocket.on('close', () => {
-    logger.info(`${websocket.url} disconnected`);
+    console.info(`${websocket.url} disconnected`); // eslint-disable-line no-console
     process.exit(); // pm2 will restart it
   });
 }
