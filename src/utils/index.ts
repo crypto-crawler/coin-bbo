@@ -1,7 +1,6 @@
 import WebSocket from 'ws';
-import { ExchangeInfo, PairInfo } from 'exchange-info';
+import { PairInfo } from 'exchange-info';
 
-// eslint-disable-next-line import/prefer-default-export
 export async function listenWebSocket(
   websocket: WebSocket,
   handleData: (data: WebSocket.Data) => void,
@@ -27,18 +26,4 @@ export function buildPairMap(pairs: { [key: string]: PairInfo }): Map<string, Pa
     result.set(pairInfo.raw_pair, pairInfo);
   });
   return result;
-}
-
-export function getChannels(
-  pairs: string[],
-  exchangeInfo: ExchangeInfo,
-  getChannel: (pair: string, exchangeInfo: ExchangeInfo) => string,
-): string[] {
-  const channels: string[] = [];
-  pairs.forEach(pair => {
-    const channel = getChannel(pair, exchangeInfo);
-    channels.push(channel);
-  });
-
-  return channels;
 }

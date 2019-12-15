@@ -16,3 +16,10 @@ export interface OrderBookMsg extends Msg {
   bids: Array<OrderItem>; // sorted from largest to smallest
   full: boolean;
 }
+
+export interface BookTickerMsg extends Msg {
+  bidPrice: number;
+  bidQuantity: number;
+  askPrice: number;
+  askQuantity: number;
+}

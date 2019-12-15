@@ -1,6 +1,6 @@
 {
   "name": "coin-bbo",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A crawler to get realtime BBO messages from crypto exchanges.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

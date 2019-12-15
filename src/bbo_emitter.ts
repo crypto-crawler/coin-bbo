@@ -1,7 +1,7 @@
 import { strict as assert } from 'assert';
 import { AskQueue, BidQueue, Order } from './pojo/order_queue';
 import { BboMsg } from './pojo/bbo_msg';
-import { OrderBookMsg, OrderItem } from './pojo/msg';
+import { OrderBookMsg, OrderItem, BookTickerMsg } from './pojo/msg';
 
 export type BboMessageCallback = (msg: BboMsg) => Promise<Boolean>;
 
@@ -30,15 +30,6 @@ export class BboEmitter {
       orderBookMsg.bids = orderBookMsg.bids.slice(0, 1); // eslint-disable-line no-param-reassign
     }
 
-    if (!(orderBookMsg.pair in this.pairBbo)) {
-      this.pairBbo[orderBookMsg.pair] = {
-        bestAsks: new AskQueue(),
-        bestBids: new BidQueue(),
-      };
-    }
-    this.pairBbo[orderBookMsg.pair].bestAsks.deleteTimeout(BboEmitter.TIMEOUT);
-    this.pairBbo[orderBookMsg.pair].bestBids.deleteTimeout(BboEmitter.TIMEOUT);
-
     const createOrder = (orderItem: OrderItem): Order => ({
       price: orderItem.price,
       quantity: orderItem.quantity,
@@ -55,9 +46,43 @@ export class BboEmitter {
     });
   }
 
+  public async addBookTicker(bookTicker: BookTickerMsg): Promise<void> {
+    assert.equal(bookTicker.exchange, this.exchange);
+
+    await this.addOrder(
+      {
+        price: bookTicker.askPrice,
+        quantity: bookTicker.askQuantity,
+        timestamp: bookTicker.timestamp,
+      },
+      bookTicker.pair,
+      true,
+      true,
+    );
+    await this.addOrder(
+      {
+        price: bookTicker.bidPrice,
+        quantity: bookTicker.bidQuantity,
+        timestamp: bookTicker.timestamp,
+      },
+      bookTicker.pair,
+      false,
+      true,
+    );
+  }
+
   private async addOrder(order: Order, pair: string, side: boolean, full: boolean): Promise<void> {
     assert.ok(order.price);
     assert.ok(order.timestamp);
+
+    if (!(pair in this.pairBbo)) {
+      this.pairBbo[pair] = {
+        bestAsks: new AskQueue(),
+        bestBids: new BidQueue(),
+      };
+    }
+    this.pairBbo[pair].bestAsks.deleteTimeout(BboEmitter.TIMEOUT);
+    this.pairBbo[pair].bestBids.deleteTimeout(BboEmitter.TIMEOUT);
 
     const queue = side ? this.pairBbo[pair].bestAsks : this.pairBbo[pair].bestBids;
 

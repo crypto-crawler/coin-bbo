@@ -1,6 +1,6 @@
 # coin-bbo
 
-A crawler to get realtime BBO from crypto exchanges.
+A crawler to get realtime BBO messages from crypto exchanges.
 
 ## How to use
 
