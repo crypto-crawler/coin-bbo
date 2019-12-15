@@ -5,7 +5,7 @@ A crawler to get realtime BBO from crypto exchanges.
 ## How to use
 
 ```javascript
-const crawl = require('crypto-bbo').default; // eslint-disable-line import/no-unresolved
+const crawl = require('coin-bbo').default; // eslint-disable-line import/no-unresolved
 
 function processMsgCallback(msg) {
   console.info(msg); // eslint-disable-line no-console
@@ -19,13 +19,13 @@ function processMsgCallback(msg) {
 ## Quickstart
 
 ```bash
-npx crypto-bbo --exchange Binance --pair BTC_USDT
+npx coin-bbo --exchange Binance --pair BTC_USDT
 ```
 
 ## Help
 
 ```bash
-npx crypto-bbo --help
+npx coin-bbo --help
 ```
 
 ## API Manual
