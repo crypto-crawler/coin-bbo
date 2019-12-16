@@ -1,4 +1,4 @@
-export const CHANNEL_TYPES = ['BookTicker', 'FullOrderBook', 'OrderBookUpdate', 'Trade'] as const;
+export const CHANNEL_TYPES = ['BBO', 'FullOrderBook', 'OrderBookUpdate', 'Trade'] as const;
 export type ChannelType = typeof CHANNEL_TYPES[number];
 
 export const EXCHANGES = ['Binance', 'Newdex', 'WhaleEx'] as const;

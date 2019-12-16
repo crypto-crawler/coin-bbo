@@ -10,7 +10,7 @@ function getChannel(channeltype: ChannelType, pair: string, exchangeInfo: Exchan
   const pairInfo = exchangeInfo.pairs[pair];
   const rawPair = pairInfo.raw_pair.toLowerCase();
   switch (channeltype) {
-    case 'BookTicker':
+    case 'BBO':
       return `${rawPair}@bookTicker`;
     case 'OrderBookUpdate':
       return `${rawPair}@depth`;
@@ -27,7 +27,7 @@ function getChannelType(channel: string): ChannelType {
   let result: ChannelType;
   switch (suffix) {
     case 'bookTicker':
-      result = 'BookTicker';
+      result = 'BBO';
       break;
     case 'depth':
       result = 'OrderBookUpdate';
@@ -54,7 +54,7 @@ export default async function crawl(
     pairs = Object.keys(exchangeInfo.pairs); // eslint-disable-line no-param-reassign
   }
 
-  const channels = pairs.map(p => getChannel('BookTicker', p, exchangeInfo));
+  const channels = pairs.map(p => getChannel('BBO', p, exchangeInfo));
   assert.ok(channels.length > 0);
   const websocketUrl = `${exchangeInfo.websocket_endpoint}/stream?streams=${channels.join('/')}`;
   const websocket = new WebSocket(websocketUrl);
@@ -62,7 +62,7 @@ export default async function crawl(
     const rawMsg: { stream: string; data: { [key: string]: any } } = JSON.parse(data as string);
     const channelType = getChannelType(rawMsg.stream);
     switch (channelType) {
-      case 'BookTicker': {
+      case 'BBO': {
         const rawBookTickerMsg = rawMsg.data as {
           u: number; // order book updateId
           s: string; // symbol
