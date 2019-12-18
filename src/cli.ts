@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
 import yargs from 'yargs';
-import { EXCHANGES } from './bbo_emitter';
+import { EXCHANGES } from 'crypto-crawler/dist/crawler';
 
 import crawl from './index';
 

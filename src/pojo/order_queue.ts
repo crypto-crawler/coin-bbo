@@ -38,6 +38,14 @@ export class OrderQueue extends FastPriorityQueue<Order> {
     return result;
   }
 
+  public replaceTopOrAdd(value: Order): void {
+    if (this.isEmpty()) {
+      this.add(value);
+    } else {
+      super.replaceTop(value);
+    }
+  }
+
   public removeAll(price: number): Order[] {
     return this.removeMany(x => x.price === price);
   }
