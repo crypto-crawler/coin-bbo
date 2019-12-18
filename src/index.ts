@@ -2,9 +2,8 @@ import crawl, { Msg, BboMsg, OrderBookMsg } from 'crypto-crawler';
 import { SupportedExchange } from 'crypto-crawler/dist/crawler';
 import { BboMessageCallback, BboEmitter } from './bbo_emitter';
 
-async function defaultBboMessageCallback(msg: BboMsg): Promise<Boolean> {
+async function defaultBboMessageCallback(msg: BboMsg): Promise<void> {
   console.info(msg); // eslint-disable-line no-console
-  return true;
 }
 
 /**

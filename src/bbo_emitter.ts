@@ -3,7 +3,7 @@ import { OrderBookMsg, OrderItem, BboMsg } from 'crypto-crawler';
 import { SupportedExchange } from 'crypto-crawler/dist/crawler';
 import { AskQueue, BidQueue, Order } from './pojo/order_queue';
 
-export type BboMessageCallback = (msg: BboMsg) => Promise<Boolean>;
+export type BboMessageCallback = (msg: BboMsg) => Promise<void>;
 
 export class BboEmitter {
   private static TIMEOUT = 1000 * 60 * 30; // 30 min
