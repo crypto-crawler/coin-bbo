@@ -55,3 +55,4 @@ export default async function crawlBbo(
 }
 
 export { BboMessageCallback } from './bbo_emitter';
+export { BboMsg } from 'crypto-crawler';
