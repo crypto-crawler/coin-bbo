@@ -115,7 +115,7 @@ export class BboEmitter {
 
   // Added orders from OrderBookUpdate
   private async addOrder(order: Order, pair: string, side: boolean): Promise<void> {
-    assert.ok(order.price);
+    if (order.price <= 0) return;
     assert.ok(order.timestamp);
 
     const queue = side ? this.pairBbo[pair].lowestAsks : this.pairBbo[pair].highestBids;

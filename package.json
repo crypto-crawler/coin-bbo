@@ -1,6 +1,6 @@
 {
   "name": "coin-bbo",
-  "version": "0.0.10",
+  "version": "0.1.0",
   "description": "A crawler to get realtime BBO messages from crypto exchanges.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -33,14 +33,14 @@
   "homepage": "https://github.com/soulmachine/coin-bbo",
   "devDependencies": {
     "@types/jest": "^24.0.24",
-    "@types/node": "^12.12.21",
+    "@types/node": "^13.1.0",
     "@types/ws": "^6.0.4",
-    "@types/yargs": "^13.0.3",
-    "@typescript-eslint/eslint-plugin": "^2.12.0",
-    "@typescript-eslint/parser": "^2.12.0",
-    "eslint": "^6.7.2",
+    "@types/yargs": "^13.0.4",
+    "@typescript-eslint/eslint-plugin": "^2.13.0",
+    "@typescript-eslint/parser": "^2.13.0",
+    "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-config-prettier": "^6.7.0",
+    "eslint-config-prettier": "^6.8.0",
     "eslint-plugin-import": "^2.19.1",
     "eslint-plugin-jest": "^23.1.1",
     "eslint-plugin-markdown": "^1.0.1",
@@ -49,11 +49,11 @@
     "jest-each": "^24.9.0",
     "prettier": "^1.19.1",
     "ts-jest": "^24.2.0",
-    "typescript": "^3.7.3"
+    "typescript": "^3.7.4"
   },
   "dependencies": {
     "crypto-crawler": "^2.1.8",
-    "exchange-info": "^1.0.19",
+    "exchange-info": "^1.0.21",
     "fastpriorityqueue": "^0.6.3",
     "ws": "^7.2.1",
     "yargs": "^15.0.2"
