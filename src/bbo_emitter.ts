@@ -2,6 +2,7 @@ import { strict as assert } from 'assert';
 import { OrderBookMsg, OrderItem, BboMsg } from 'crypto-crawler';
 import { SupportedExchange } from 'crypto-crawler/dist/crawler';
 import { AskQueue, BidQueue, Order } from './pojo/order_queue';
+import debug from './utils';
 
 export type BboMessageCallback = (msg: BboMsg) => Promise<void>;
 
@@ -115,7 +116,10 @@ export class BboEmitter {
 
   // Added orders from OrderBookUpdate
   private async addOrder(order: Order, pair: string, side: boolean): Promise<void> {
-    if (order.price <= 0) return;
+    if (order.price <= 0) {
+      debug(`price is less than 0, pair: ${pair}, side: ${side ? 'sell' : 'buy'}, order: ${order}`);
+      return;
+    }
     assert.ok(order.timestamp);
 
     const queue = side ? this.pairBbo[pair].lowestAsks : this.pairBbo[pair].highestBids;

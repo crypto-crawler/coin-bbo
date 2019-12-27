@@ -1,6 +1,6 @@
 {
   "name": "coin-bbo",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A crawler to get realtime BBO messages from crypto exchanges.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -32,8 +32,9 @@
   },
   "homepage": "https://github.com/soulmachine/coin-bbo",
   "devDependencies": {
-    "@types/jest": "^24.0.24",
-    "@types/node": "^13.1.0",
+    "@types/debug": "^4.1.5",
+    "@types/jest": "^24.0.25",
+    "@types/node": "^13.1.1",
     "@types/ws": "^6.0.4",
     "@types/yargs": "^13.0.4",
     "@typescript-eslint/eslint-plugin": "^2.13.0",
@@ -53,7 +54,8 @@
   },
   "dependencies": {
     "crypto-crawler": "^2.1.8",
-    "exchange-info": "^1.0.21",
+    "debug": "^4.1.1",
+    "exchange-info": "^1.0.24",
     "fastpriorityqueue": "^0.6.3",
     "ws": "^7.2.1",
     "yargs": "^15.0.2"
