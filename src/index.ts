@@ -39,6 +39,7 @@ export default async function crawlBbo(
         bboEmitters[exchange].addOrderBook(msg as OrderBookMsg),
       );
     case 'Bitstamp':
+    case 'MXC':
       return crawl(exchange, ['OrderBookUpdate'], pairs, (msg: Msg) =>
         bboEmitters[exchange].addOrderBook(msg as OrderBookMsg),
       );
