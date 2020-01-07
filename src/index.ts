@@ -1,6 +1,5 @@
-import crawl, { Msg, BboMsg, OrderBookMsg } from 'crypto-crawler';
-import { SupportedExchange } from 'crypto-crawler/dist/crawler';
-import { BboMessageCallback, BboEmitter } from './bbo_emitter';
+import crawl, { BboMsg, Msg, OrderBookMsg } from 'crypto-crawler';
+import { BboEmitter, BboMessageCallback } from './bbo_emitter';
 
 async function defaultBboMessageCallback(msg: BboMsg): Promise<void> {
   console.info(msg); // eslint-disable-line no-console
@@ -24,7 +23,7 @@ export default async function crawlBbo(
 
   const bboEmitters: { [key: string]: BboEmitter } = {};
   if (!(exchange in bboEmitters)) {
-    bboEmitters[exchange] = new BboEmitter(exchange as SupportedExchange, bboMessageCallback);
+    bboEmitters[exchange] = new BboEmitter(exchange, bboMessageCallback);
   }
 
   switch (exchange) {
@@ -34,6 +33,10 @@ export default async function crawlBbo(
     case 'OKEx_Spot':
       return crawl(exchange, ['BBO'], pairs, (msg: Msg) =>
         bboEmitters[exchange].addBboMsg(msg as BboMsg),
+      );
+    case 'Bitfinex':
+      return crawl(exchange, ['BBO'], pairs, (msg: Msg) =>
+        bboEmitters[exchange].addOrderBook(msg as OrderBookMsg),
       );
     case 'Bitstamp':
       return crawl(exchange, ['OrderBookUpdate'], pairs, (msg: Msg) =>
@@ -53,5 +56,5 @@ export default async function crawlBbo(
   }
 }
 
-export { BboMessageCallback } from './bbo_emitter';
 export { BboMsg } from 'crypto-crawler';
+export { BboMessageCallback } from './bbo_emitter';

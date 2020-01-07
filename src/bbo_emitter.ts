@@ -1,6 +1,5 @@
 import { strict as assert } from 'assert';
-import { OrderBookMsg, OrderItem, BboMsg } from 'crypto-crawler';
-import { SupportedExchange } from 'crypto-crawler/dist/crawler';
+import { BboMsg, OrderBookMsg, OrderItem } from 'crypto-crawler';
 import { AskQueue, BidQueue, Order } from './pojo/order_queue';
 import debug from './utils';
 
@@ -13,11 +12,11 @@ export class BboEmitter {
 
   private pairBbo: { [key: string]: { lowestAsks: AskQueue; highestBids: BidQueue } } = {};
 
-  private exchange: SupportedExchange;
+  private exchange: string;
 
   private bboMsgCallBack: BboMessageCallback;
 
-  constructor(exchange: SupportedExchange, bboMsgCallBack: BboMessageCallback) {
+  constructor(exchange: string, bboMsgCallBack: BboMessageCallback) {
     this.exchange = exchange;
     this.bboMsgCallBack = bboMsgCallBack;
   }
@@ -124,7 +123,7 @@ export class BboEmitter {
 
     const queue = side ? this.pairBbo[pair].lowestAsks : this.pairBbo[pair].highestBids;
 
-    // price 0 means delete
+    // quantity 0 means delete
     if (order.quantity === 0) {
       queue.removeAll(order.price);
       return;
