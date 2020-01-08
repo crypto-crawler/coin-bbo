@@ -30,7 +30,6 @@ export default async function crawlBbo(
     case 'Binance':
     case 'Huobi':
     case 'Kraken':
-    case 'OKEx_Spot':
       return crawl(exchange, ['BBO'], pairs, (msg: Msg) =>
         bboEmitters[exchange].addBboMsg(msg as BboMsg),
       );
@@ -45,6 +44,7 @@ export default async function crawlBbo(
       );
     case 'Coinbase':
     case 'Newdex':
+    case 'OKEx_Spot':
       return crawl(exchange, ['OrderBook'], pairs, (msg: Msg) =>
         bboEmitters[exchange].addOrderBook(msg as OrderBookMsg),
       );
