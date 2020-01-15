@@ -27,6 +27,8 @@ export class BboEmitter {
     const prevHighestBid = this.pairBbo[orderBookMsg.pair].highestBids.peek();
 
     if (orderBookMsg.full) {
+      if (orderBookMsg.bids.length <= 0 || orderBookMsg.asks.length <= 0) return;
+
       const msg: BboMsg = {
         exchange: orderBookMsg.exchange,
         channel: orderBookMsg.channel,
