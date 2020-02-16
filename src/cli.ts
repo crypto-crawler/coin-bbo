@@ -6,7 +6,7 @@ import crawl from './index';
 
 const { argv } = yargs
   // eslint-disable-next-line no-shadow
-  .command('$0 <exchange> <pair>', 'Get realtime BBO', yargs => {
+  .command('$0 <exchange> [pairs]', 'Get realtime BBO', yargs => {
     yargs
       .positional('exchange', {
         choices: EXCHANGES,
@@ -14,15 +14,18 @@ const { argv } = yargs
         default: 'Coinbase',
         describe: 'The exchange name',
       })
-      .positional('pair', {
-        type: 'string',
-        describe: 'The trading pair',
-        default: 'BTC_USD',
+      .options({
+        pairs: {
+          type: 'array',
+          describe: 'Trading pairs to crawl',
+          demandOption: true,
+          default: ['BTC_USDT', 'ETH_USDT'],
+        },
       });
   });
 
-const { exchange, pair } = argv;
+const { exchange, pairs } = argv;
 
 (async () => {
-  await crawl(exchange as string, [pair as string]);
+  await crawl(exchange as string, pairs as string[]);
 })();

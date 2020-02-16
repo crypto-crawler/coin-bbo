@@ -19,7 +19,7 @@ function processMsgCallback(msg) {
 ## Quickstart
 
 ```bash
-npx coin-bbo --exchange Binance --pair BTC_USDT
+npx coin-bbo Binance --pairs BTC_USDT ETH_USDT
 ```
 
 ## Help
@@ -40,9 +40,9 @@ There is only one API in this library:
  * @param pairs The pairs to crawl
  * @param bboMessageCallback The function to process BBO messages
  */
-export default function crawl(
+export default function crawlBbo(
   exchange: string,
-  pairs?: string[],
+  pairs?: string[], // empty means all
   bboMessageCallback?: BboMessageCallback,
 ): Promise<void>;
 ```
