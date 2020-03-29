@@ -1,5 +1,6 @@
 import { strict as assert } from 'assert';
 import { BboMsg, OrderBookMsg, OrderItem } from 'crypto-crawler';
+import { MarketType } from 'crypto-markets';
 import { AskQueue, BidQueue, Order } from './pojo/order_queue';
 import debug from './utils';
 
@@ -14,14 +15,19 @@ export class BboEmitter {
 
   private exchange: string;
 
+  private marketType: MarketType;
+
   private bboMsgCallBack: BboMessageCallback;
 
-  constructor(exchange: string, bboMsgCallBack: BboMessageCallback) {
+  constructor(exchange: string, marketType: MarketType, bboMsgCallBack: BboMessageCallback) {
     this.exchange = exchange;
+    this.marketType = marketType;
     this.bboMsgCallBack = bboMsgCallBack;
   }
 
   public async addOrderBook(orderBookMsg: OrderBookMsg): Promise<void> {
+    assert.equal(orderBookMsg.exchange, this.exchange);
+    assert.equal(orderBookMsg.marketType, this.marketType);
     this.init(orderBookMsg.pair);
     const prevLowestAsk = this.pairBbo[orderBookMsg.pair].lowestAsks.peek();
     const prevHighestBid = this.pairBbo[orderBookMsg.pair].highestBids.peek();
@@ -31,10 +37,13 @@ export class BboEmitter {
 
       const msg: BboMsg = {
         exchange: orderBookMsg.exchange,
-        channel: orderBookMsg.channel,
+        marketType: orderBookMsg.marketType,
         pair: orderBookMsg.pair,
+        rawPair: orderBookMsg.rawPair,
+        channel: orderBookMsg.channel,
+        channelType: orderBookMsg.channelType,
         timestamp: orderBookMsg.timestamp,
-        raw: '',
+        raw: orderBookMsg.raw,
         bidPrice: orderBookMsg.bids[0].price,
         bidQuantity: orderBookMsg.bids[0].quantity,
         askPrice: orderBookMsg.asks[0].price,
@@ -50,11 +59,11 @@ export class BboEmitter {
       timestamp: orderBookMsg.timestamp,
     });
 
-    orderBookMsg.asks.forEach(async orderItem => {
+    orderBookMsg.asks.forEach(async (orderItem) => {
       const order = createOrder(orderItem);
       await this.addOrder(order, orderBookMsg.pair, true);
     });
-    orderBookMsg.bids.forEach(async orderItem => {
+    orderBookMsg.bids.forEach(async (orderItem) => {
       const order = createOrder(orderItem);
       await this.addOrder(order, orderBookMsg.pair, false);
     });
@@ -63,18 +72,21 @@ export class BboEmitter {
     const curHighestBid = this.pairBbo[orderBookMsg.pair].highestBids.peek();
     const result = BboEmitter.emitBboMsg(
       this.exchange,
+      this.marketType,
       orderBookMsg.pair,
+      orderBookMsg.rawPair,
+      orderBookMsg.channel,
       prevLowestAsk,
       prevHighestBid,
       curLowestAsk,
       curHighestBid,
-      false,
     );
     if (result) await this.bboMsgCallBack(result);
   }
 
   public async addBboMsg(bboMsg: BboMsg): Promise<void> {
     assert.equal(bboMsg.exchange, this.exchange);
+    assert.equal(bboMsg.marketType, this.marketType);
     this.init(bboMsg.pair);
     const prevLowestAsk = this.pairBbo[bboMsg.pair].lowestAsks.peek();
     const prevHighestBid = this.pairBbo[bboMsg.pair].highestBids.peek();
@@ -90,18 +102,22 @@ export class BboEmitter {
       timestamp: bboMsg.timestamp,
     });
 
-    const curLowestAsk = this.pairBbo[bboMsg.pair].lowestAsks.peek();
-    const curHighestBid = this.pairBbo[bboMsg.pair].highestBids.peek();
-    const result = BboEmitter.emitBboMsg(
-      this.exchange,
-      bboMsg.pair,
-      prevLowestAsk,
-      prevHighestBid,
-      curLowestAsk,
-      curHighestBid,
-      true,
-    );
-    if (result) await this.bboMsgCallBack(result);
+    const curLowestAsk = this.pairBbo[bboMsg.pair].lowestAsks.peek()!;
+    const curHighestBid = this.pairBbo[bboMsg.pair].highestBids.peek()!;
+
+    // No change
+    if (
+      prevLowestAsk &&
+      prevHighestBid &&
+      curLowestAsk.price === prevLowestAsk!.price &&
+      curLowestAsk.quantity === prevLowestAsk!.quantity &&
+      curHighestBid.price === prevHighestBid!.price &&
+      curHighestBid.quantity === prevHighestBid!.quantity
+    ) {
+      return;
+    }
+
+    await this.bboMsgCallBack(bboMsg);
   }
 
   private init(pair: string) {
@@ -164,12 +180,14 @@ export class BboEmitter {
 
   private static emitBboMsg(
     exchange: string,
+    marketType: MarketType,
     pair: string,
+    rawPair: string,
+    channel: string,
     prevLowestAsk: Order | undefined,
     prevHighestBid: Order | undefined,
     curLowestAsk: Order | undefined,
     curHighestBid: Order | undefined,
-    force: boolean,
   ): BboMsg | undefined {
     if (curLowestAsk === undefined || curHighestBid === undefined) return undefined;
 
@@ -185,15 +203,15 @@ export class BboEmitter {
       changed = true;
     }
 
-    if (!changed && !force) return undefined;
+    if (!changed) return undefined;
 
     let lowestAsk: Order = curLowestAsk;
-    if (!force && prevLowestAsk !== undefined && prevLowestAsk!.price < curLowestAsk!.price) {
+    if (prevLowestAsk !== undefined && prevLowestAsk!.price < curLowestAsk!.price) {
       lowestAsk = prevLowestAsk;
     }
 
     let highestBid: Order = curHighestBid;
-    if (!force && prevHighestBid !== undefined && prevHighestBid!.price > curHighestBid!.price) {
+    if (prevHighestBid !== undefined && prevHighestBid!.price > curHighestBid!.price) {
       highestBid = prevHighestBid;
     }
 
@@ -210,10 +228,13 @@ export class BboEmitter {
     }
     const bboMsg: BboMsg = {
       exchange,
-      channel: '',
+      marketType,
       pair,
+      rawPair,
+      channel,
+      channelType: 'OrderBook',
       timestamp: Math.max(lowestAsk.timestamp, highestBid.timestamp),
-      raw: '',
+      raw: {},
       bidPrice: highestBid.price,
       bidQuantity: highestBid.quantity,
       askPrice: lowestAsk.price,

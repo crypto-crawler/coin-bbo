@@ -1,6 +1,6 @@
 {
   "name": "coin-bbo",
-  "version": "0.3.8",
+  "version": "0.3.9",
   "description": "A crawler to get realtime BBO messages from crypto exchanges.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -15,7 +15,12 @@
     "lint": "eslint . --ext '.js,.jsx,.ts,.tsx,.md'",
     "prettier": "prettier -c --write '**/*'",
     "test": "jest --config jest.config.json --no-cache",
-    "prepublish": "npm run build && npm run lint && npm run prettier && npm run test"
+    "prepare": "npm run build && npm run lint && npm run prettier && npm run test"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run prepare"
+    }
   },
   "repository": {
     "type": "git",
@@ -36,30 +41,32 @@
   "homepage": "https://github.com/soulmachine/coin-bbo",
   "devDependencies": {
     "@types/debug": "^4.1.5",
-    "@types/jest": "^25.1.2",
-    "@types/node": "^13.7.2",
-    "@types/ws": "^7.2.1",
-    "@types/yargs": "^15.0.3",
-    "@typescript-eslint/eslint-plugin": "^2.20.0",
-    "@typescript-eslint/parser": "^2.20.0",
+    "@types/jest": "^25.1.4",
+    "@types/node": "^13.9.5",
+    "@types/ws": "^7.2.3",
+    "@types/yargs": "^15.0.4",
+    "@typescript-eslint/eslint-plugin": "^2.25.0",
+    "@typescript-eslint/parser": "^2.25.0",
     "eslint": "^6.8.0",
-    "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-config-prettier": "^6.10.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-config-prettier": "^6.10.1",
     "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-jest": "^23.7.0",
-    "eslint-plugin-markdown": "^1.0.1",
+    "eslint-plugin-jest": "^23.8.2",
+    "eslint-plugin-markdown": "^1.0.2",
     "eslint-plugin-prettier": "^3.1.2",
-    "jest": "^25.1.0",
-    "jest-each": "^25.1.0",
-    "prettier": "^1.19.1",
-    "ts-jest": "^25.2.0",
-    "typescript": "^3.7.5"
+    "husky": "^4.2.3",
+    "jest": "^25.2.3",
+    "jest-each": "^25.2.3",
+    "prettier": "^2.0.2",
+    "ts-jest": "^25.2.1",
+    "typescript": "^3.8.3"
   },
   "dependencies": {
-    "crypto-crawler": "^2.4.6",
+    "crypto-crawler": "^2.5.3",
+    "crypto-markets": "^0.1.5",
     "debug": "^4.1.1",
     "fastpriorityqueue": "^0.6.3",
-    "ws": "^7.2.1",
-    "yargs": "^15.1.0"
+    "ws": "^7.2.3",
+    "yargs": "^15.3.1"
   }
 }

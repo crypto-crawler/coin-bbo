@@ -12,14 +12,14 @@ function processMsgCallback(msg) {
 }
 
 (async () => {
-  await crawl('Binance', ['BTC_USDT'], processMsgCallback);
+  await crawl('CoinbasePro', 'Spot', ['BTC_USD'], processMsgCallback);
 })();
 ```
 
 ## Quickstart
 
 ```bash
-npx coin-bbo Binance --pairs BTC_USDT ETH_USDT
+npx coin-bbo CoinbasePro --marketType Spot --pairs BTC_USD
 ```
 
 ## Help

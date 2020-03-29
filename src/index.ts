@@ -1,4 +1,5 @@
 import crawl, { BboMsg, Msg, OrderBookMsg } from 'crypto-crawler';
+import { MarketType } from 'crypto-markets';
 import { BboEmitter, BboMessageCallback } from './bbo_emitter';
 
 async function defaultBboMessageCallback(msg: BboMsg): Promise<void> {
@@ -9,12 +10,14 @@ async function defaultBboMessageCallback(msg: BboMsg): Promise<void> {
  * Crawl BBO messages.
  *
  * @param exchange The crypto exchange name
+ * @param marketType Market type, e.g., Spot, Futures
  * @param pairs The pairs to crawl
  * @param bboMessageCallback The function to process BBO messages
  */
 export default async function crawlBbo(
   exchange: string,
-  pairs: string[] = [], // empty means all
+  marketType: MarketType,
+  pairs: readonly string[],
   bboMessageCallback: BboMessageCallback = defaultBboMessageCallback,
 ): Promise<void> {
   if (pairs.length > 0) {
@@ -23,33 +26,24 @@ export default async function crawlBbo(
 
   const bboEmitters: { [key: string]: BboEmitter } = {};
   if (!(exchange in bboEmitters)) {
-    bboEmitters[exchange] = new BboEmitter(exchange, bboMessageCallback);
+    bboEmitters[exchange] = new BboEmitter(exchange, marketType, bboMessageCallback);
   }
 
   switch (exchange) {
+    case 'Bitfinex':
     case 'Binance':
     case 'Huobi':
     case 'Kraken':
-      return crawl(exchange, ['BBO'], pairs, (msg: Msg) =>
+      return crawl(exchange, marketType, ['BBO'], pairs, (msg: Msg) =>
         bboEmitters[exchange].addBboMsg(msg as BboMsg),
-      );
-    case 'Bitfinex':
-      return crawl(exchange, ['BBO'], pairs, (msg: Msg) =>
-        bboEmitters[exchange].addOrderBook(msg as OrderBookMsg),
       );
     case 'Bitstamp':
     case 'MXC':
-      return crawl(exchange, ['OrderBookUpdate'], pairs, (msg: Msg) =>
-        bboEmitters[exchange].addOrderBook(msg as OrderBookMsg),
-      );
-    case 'Coinbase':
+    case 'CoinbasePro':
     case 'Newdex':
-    case 'OKEx_Spot':
-      return crawl(exchange, ['OrderBook'], pairs, (msg: Msg) =>
-        bboEmitters[exchange].addOrderBook(msg as OrderBookMsg),
-      );
+    case 'OKEx':
     case 'WhaleEx':
-      return crawl(exchange, ['FullOrderBook'], pairs, (msg: Msg) =>
+      return crawl(exchange, marketType, ['OrderBook'], pairs, (msg: Msg) =>
         bboEmitters[exchange].addOrderBook(msg as OrderBookMsg),
       );
     default:

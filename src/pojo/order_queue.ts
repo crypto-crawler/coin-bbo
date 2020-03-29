@@ -30,7 +30,7 @@ export const bidComparator = (x: Order, y: Order) => {
 export class OrderQueue extends FastPriorityQueue<Order> {
   public find(price: number): Order | undefined {
     let result: Order | undefined;
-    this.forEach(order => {
+    this.forEach((order) => {
       if (order.price === price) {
         result = order;
       }
@@ -47,7 +47,7 @@ export class OrderQueue extends FastPriorityQueue<Order> {
   }
 
   public removeAll(price: number): Order[] {
-    return this.removeMany(x => x.price === price);
+    return this.removeMany((x) => x.price === price);
   }
 
   public deleteTimeout(timeoutThreshold: number): void {
