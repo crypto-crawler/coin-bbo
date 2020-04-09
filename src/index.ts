@@ -39,7 +39,7 @@ export default async function crawlBbo(
     Kraken: 'BBO',
     MXC: 'OrderBook',
     Newdex: 'OrderBook',
-    OKEx: 'OrderBook',
+    OKEx: 'BBO',
     WhaleEx: 'OrderBook',
   };
 
