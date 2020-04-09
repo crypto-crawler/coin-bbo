@@ -1,5 +1,5 @@
 import { strict as assert } from 'assert';
-import { BboMsg, OrderBookMsg, OrderItem } from 'crypto-crawler';
+import { BboMsg, Msg, OrderBookMsg, OrderItem } from 'crypto-crawler';
 import { MarketType } from 'crypto-markets';
 import { AskQueue, BidQueue, Order } from './pojo/order_queue';
 import debug from './utils';
@@ -25,7 +25,20 @@ export class BboEmitter {
     this.bboMsgCallBack = bboMsgCallBack;
   }
 
-  public async addOrderBook(orderBookMsg: OrderBookMsg): Promise<void> {
+  public async addMsg(msg: Msg): Promise<void> {
+    switch (msg.channelType) {
+      case 'OrderBook':
+        await this.addOrderBook(msg as OrderBookMsg);
+        break;
+      case 'BBO':
+        await this.addBboMsg(msg as BboMsg);
+        break;
+      default:
+        throw new Error(`Unknown channelType ${msg.channelType}`);
+    }
+  }
+
+  private async addOrderBook(orderBookMsg: OrderBookMsg): Promise<void> {
     assert.equal(orderBookMsg.exchange, this.exchange);
     assert.equal(orderBookMsg.marketType, this.marketType);
     this.init(orderBookMsg.pair);
@@ -84,7 +97,7 @@ export class BboEmitter {
     if (result) await this.bboMsgCallBack(result);
   }
 
-  public async addBboMsg(bboMsg: BboMsg): Promise<void> {
+  private async addBboMsg(bboMsg: BboMsg): Promise<void> {
     assert.equal(bboMsg.exchange, this.exchange);
     assert.equal(bboMsg.marketType, this.marketType);
     this.init(bboMsg.pair);

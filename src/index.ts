@@ -1,4 +1,5 @@
-import crawl, { BboMsg, Msg, OrderBookMsg } from 'crypto-crawler';
+import { strict as assert } from 'assert';
+import crawl, { BboMsg, Msg } from 'crypto-crawler';
 import { MarketType } from 'crypto-markets';
 import { BboEmitter, BboMessageCallback } from './bbo_emitter';
 
@@ -29,29 +30,24 @@ export default async function crawlBbo(
     bboEmitters[exchange] = new BboEmitter(exchange, marketType, bboMessageCallback);
   }
 
-  switch (exchange) {
-    case 'Bitfinex':
-      return crawl(exchange, marketType, ['BBO'], pairs, (msg: Msg) =>
-        bboEmitters[exchange].addOrderBook(msg as OrderBookMsg),
-      );
-    case 'Binance':
-    case 'Huobi':
-    case 'Kraken':
-      return crawl(exchange, marketType, ['BBO'], pairs, (msg: Msg) =>
-        bboEmitters[exchange].addBboMsg(msg as BboMsg),
-      );
-    case 'Bitstamp':
-    case 'MXC':
-    case 'CoinbasePro':
-    case 'Newdex':
-    case 'OKEx':
-    case 'WhaleEx':
-      return crawl(exchange, marketType, ['OrderBook'], pairs, (msg: Msg) =>
-        bboEmitters[exchange].addOrderBook(msg as OrderBookMsg),
-      );
-    default:
-      throw new Error(`Unknown exchange: ${exchange}`);
-  }
+  const channelNameMap: { [key: string]: 'BBO' | 'OrderBook' } = {
+    Binance: 'BBO',
+    Bitfinex: 'BBO',
+    Bitstamp: 'OrderBook',
+    CoinbasePro: 'OrderBook',
+    Huobi: 'BBO',
+    Kraken: 'BBO',
+    MXC: 'OrderBook',
+    Newdex: 'OrderBook',
+    OKEx: 'OrderBook',
+    WhaleEx: 'OrderBook',
+  };
+
+  assert.ok(channelNameMap[exchange], `Unknown exchange: ${exchange}`);
+
+  await crawl(exchange, marketType, [channelNameMap[exchange]], pairs, (msg: Msg) =>
+    bboEmitters[exchange].addMsg(msg),
+  );
 }
 
 export { BboMsg } from 'crypto-crawler';
