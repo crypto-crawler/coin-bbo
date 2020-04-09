@@ -30,13 +30,13 @@ export default async function crawlBbo(
   }
 
   switch (exchange) {
-    case 'Bitfinex':
     case 'Binance':
     case 'Huobi':
     case 'Kraken':
       return crawl(exchange, marketType, ['BBO'], pairs, (msg: Msg) =>
         bboEmitters[exchange].addBboMsg(msg as BboMsg),
       );
+    case 'Bitfinex':
     case 'Bitstamp':
     case 'MXC':
     case 'CoinbasePro':
