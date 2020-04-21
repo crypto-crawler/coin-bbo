@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
-import { EXCHANGES } from 'crypto-crawler/dist/crawler';
+import { SUPPORTED_EXCHANGES } from 'crypto-crawler';
 import { MarketType, MARKET_TYPES } from 'crypto-markets';
 import yargs from 'yargs';
 import crawl from './index';
@@ -10,7 +10,7 @@ const { argv } = yargs
   .command('$0 <exchange> [marketType] [pairs]', 'Get realtime BBO', (yargs) => {
     yargs
       .positional('exchange', {
-        choices: EXCHANGES,
+        choices: SUPPORTED_EXCHANGES,
         type: 'string',
         default: 'Coinbase',
         describe: 'The exchange name',
