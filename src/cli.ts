@@ -32,6 +32,4 @@ const { argv } = yargs
 
 const { exchange, marketType, pairs } = argv;
 
-(async () => {
-  await crawl(exchange as string, marketType as MarketType, pairs as string[]);
-})();
+crawl(exchange as string, marketType as MarketType, pairs as string[]);

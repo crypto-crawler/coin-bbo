@@ -28,10 +28,10 @@ export class BboEmitter {
   public async addMsg(msg: Msg): Promise<void> {
     switch (msg.channelType) {
       case 'OrderBook':
-        await this.addOrderBook(msg as OrderBookMsg);
+        this.addOrderBook(msg as OrderBookMsg);
         break;
       case 'BBO':
-        await this.addBboMsg(msg as BboMsg);
+        this.addBboMsg(msg as BboMsg);
         break;
       default:
         throw new Error(`Unknown channelType ${msg.channelType}`);
@@ -62,7 +62,8 @@ export class BboEmitter {
         askPrice: orderBookMsg.asks[0].price,
         askQuantity: orderBookMsg.asks[0].quantity,
       };
-      await this.addBboMsg(msg);
+
+      this.addBboMsg(msg);
       return;
     }
 
@@ -72,17 +73,18 @@ export class BboEmitter {
       timestamp: orderBookMsg.timestamp,
     });
 
-    orderBookMsg.asks.forEach(async (orderItem) => {
+    orderBookMsg.asks.forEach((orderItem) => {
       const order = createOrder(orderItem);
-      await this.addOrder(order, orderBookMsg.pair, true);
+      this.addOrder(order, orderBookMsg.pair, true);
     });
-    orderBookMsg.bids.forEach(async (orderItem) => {
+    orderBookMsg.bids.forEach((orderItem) => {
       const order = createOrder(orderItem);
-      await this.addOrder(order, orderBookMsg.pair, false);
+      this.addOrder(order, orderBookMsg.pair, false);
     });
 
     const curLowestAsk = this.pairBbo[orderBookMsg.pair].lowestAsks.peek();
     const curHighestBid = this.pairBbo[orderBookMsg.pair].highestBids.peek();
+
     const result = BboEmitter.emitBboMsg(
       this.exchange,
       this.marketType,
@@ -94,7 +96,8 @@ export class BboEmitter {
       curLowestAsk,
       curHighestBid,
     );
-    if (result) await this.bboMsgCallBack(result);
+
+    if (result) this.bboMsgCallBack(result);
   }
 
   private async addBboMsg(bboMsg: BboMsg): Promise<void> {
@@ -130,7 +133,7 @@ export class BboEmitter {
       return;
     }
 
-    await this.bboMsgCallBack(bboMsg);
+    this.bboMsgCallBack(bboMsg);
   }
 
   private init(pair: string) {
@@ -145,7 +148,7 @@ export class BboEmitter {
   }
 
   // Added orders from OrderBookUpdate
-  private async addOrder(order: Order, pair: string, side: boolean): Promise<void> {
+  private addOrder(order: Order, pair: string, side: boolean): void {
     if (order.price <= 0) {
       debug(`price is less than 0, pair: ${pair}, side: ${side ? 'sell' : 'buy'}, order: ${order}`);
       return;
@@ -164,7 +167,7 @@ export class BboEmitter {
     // queue is empty
     if (prevTop === undefined) {
       queue.add(order);
-      // await this.emitBboMsg(order, pair, side);
+      //  this.emitBboMsg(order, pair, side);
       return;
     }
 
@@ -181,7 +184,7 @@ export class BboEmitter {
         const better = side ? order.price < prevTop.price : order.price > prevTop.price;
         if (better) {
           queue.replaceTop(order);
-          // await this.emitBboMsg(order, pair, side);
+          //  this.emitBboMsg(order, pair, side);
         }
       }
     } else {

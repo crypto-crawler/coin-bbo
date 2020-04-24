@@ -45,7 +45,7 @@ export default async function crawlBbo(
 
   assert.ok(channelNameMap[exchange], `Unknown exchange: ${exchange}`);
 
-  await crawl(exchange, marketType, [channelNameMap[exchange]], pairs, (msg: Msg) =>
+  crawl(exchange, marketType, [channelNameMap[exchange]], pairs, (msg: Msg) =>
     bboEmitters[exchange].addMsg(msg),
   );
 }
