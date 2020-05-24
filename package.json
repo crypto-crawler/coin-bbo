@@ -1,6 +1,6 @@
 {
   "name": "coin-bbo",
-  "version": "0.5.5",
+  "version": "0.5.6",
   "description": "A crawler to get realtime BBO messages from crypto exchanges.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -62,7 +62,7 @@
     "typescript": "^3.9.3"
   },
   "dependencies": {
-    "crypto-crawler": "^2.8.3",
+    "crypto-crawler": "^2.8.4",
     "crypto-markets": "^0.3.0",
     "debug": "^4.1.1",
     "fastpriorityqueue": "^0.6.3",
