@@ -7,7 +7,7 @@ import crawl from './index';
 
 const { argv } = yargs
   // eslint-disable-next-line no-shadow
-  .command('$0 <exchange> [marketType] [pairs]', 'Get realtime BBO', (yargs) => {
+  .command('$0 <exchange> <marketType> [pairs]', 'Get realtime BBO', (yargs) => {
     yargs
       .positional('exchange', {
         choices: SUPPORTED_EXCHANGES,
@@ -15,12 +15,12 @@ const { argv } = yargs
         default: 'Coinbase',
         describe: 'The exchange name',
       })
+      .positional('marketType', {
+        choices: MARKET_TYPES,
+        type: 'string',
+        default: 'Spot',
+      })
       .options({
-        marketType: {
-          choices: MARKET_TYPES,
-          type: 'string',
-          default: 'Spot',
-        },
         pairs: {
           type: 'array',
           describe: 'Trading pairs to crawl',

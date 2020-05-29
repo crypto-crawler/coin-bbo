@@ -33,6 +33,7 @@ export default async function crawlBbo(
   const channelNameMap: { [key: string]: 'BBO' | 'OrderBook' } = {
     Binance: 'BBO',
     Bitfinex: 'BBO',
+    BitMEX: 'BBO',
     Bitstamp: 'OrderBook',
     CoinbasePro: 'OrderBook',
     Huobi: 'BBO',
